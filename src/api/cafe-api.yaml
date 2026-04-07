@@ -1,0 +1,205 @@
+openapi: 3.0.0
+info:
+  title: Cafe SaaS API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+
+paths:
+  # =========================
+  # ADMIN APIs
+  # =========================
+
+  /admin/register:
+    post:
+      summary: Register Admin
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, name, password]
+              properties:
+                email:
+                  type: string
+                  example: admin@example.com
+                name:
+                  type: string
+                  example: John Doe
+                password:
+                  type: string
+                  example: password123
+                role:
+                  type: string
+                  enum: [SUPER_ADMIN, ADMIN]
+                  example: ADMIN
+      responses:
+        201:
+          description: Admin created successfully
+
+  /admin:
+    get:
+      summary: Get all admins
+      tags: [Admin]
+      responses:
+        200:
+          description: List of admins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /admin/{id}:
+    get:
+      summary: Get admin by ID
+      tags: [Admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Admin details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # =========================
+  # MENU APIs
+  # =========================
+
+  /menu:
+    post:
+      summary: Create menu item
+      tags: [Menu]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, price, cafeId]
+              properties:
+                name:
+                  type: string
+                  example: Burger
+                price:
+                  type: number
+                  example: 150
+                category:
+                  type: string
+                  example: Fast Food
+                cafeId:
+                  type: string
+                  example: cafe-uuid
+                imageUrl:
+                  type: string
+                  example: https://image.com/burger.png
+      responses:
+        201:
+          description: Menu created
+
+    get:
+      summary: Get all menu items
+      tags: [Menu]
+      responses:
+        200:
+          description: List of menu items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Menu"
+
+  /menu/{id}:
+    get:
+      summary: Get menu by ID
+      tags: [Menu]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Menu item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Menu"
+
+    patch:
+      summary: Update menu item
+      tags: [Menu]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: number
+                category:
+                  type: string
+                imageUrl:
+                  type: string
+      responses:
+        200:
+          description: Menu updated successfully
+
+# =========================
+# COMPONENTS (SCHEMAS)
+# =========================
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [SUPER_ADMIN, ADMIN]
+        cafeId:
+          type: string
+          nullable: true
+
+    Menu:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        category:
+          type: string
+        imageUrl:
+          type: string
+        cafeId:
+          type: string
