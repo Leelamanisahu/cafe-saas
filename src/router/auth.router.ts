@@ -6,13 +6,5 @@ const authRouter = Router();
 
 authRouter.post("/register", register);
 authRouter.post("/login", login);
-authRouter.get(
-  "/user",
-  authMiddleware,
-  allowRoles("ADMIN", "SUPER_ADMIN"),
-  async (req, res, next) => {
-    console.log("hello");
-  },
-);
 
 export default authRouter;
