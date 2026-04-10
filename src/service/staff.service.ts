@@ -2,6 +2,7 @@ import { Param } from "@prisma/client/runtime/client";
 import prisma from "../config/prisma";
 import bcrypt from "bcrypt";
 import { AuthUser } from "../types/auth";
+import { getAdminData } from "../utils/user";
 
 interface RegisterParams {
   email: string;
@@ -9,11 +10,6 @@ interface RegisterParams {
   password: string;
   role: string;
 }
-
-export const getAdminData = async (admin: AuthUser) => {
-  const adminData = await prisma.user.findUnique({ where: { id: admin.id } });
-  return adminData;
-};
 
 export const createStaffService = async (
   Param: RegisterParams,

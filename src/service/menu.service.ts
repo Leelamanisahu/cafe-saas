@@ -1,10 +1,10 @@
 import prisma from "../config/prisma";
 import { AuthUser } from "../types/auth";
-import { getAdminData } from "./staff.service";
+import { getAdminData } from "../utils/user";
 
 interface MenuParams {
   name: string;
-  price: number;
+  price: number | string;
   category: string;
   imageUrl: string;
 }
@@ -13,7 +13,6 @@ export const createMenuService = async (Param: MenuParams, user: AuthUser) => {
   const { name, price, category, imageUrl } = Param;
 
   const adminData = await getAdminData(user);
-
   if (!adminData?.cafeId) {
     throw new Error("Admin must create a cafe first");
   }
@@ -21,8 +20,8 @@ export const createMenuService = async (Param: MenuParams, user: AuthUser) => {
   const menu = await prisma.menu.create({
     data: {
       name,
-      price,
-      category,
+      price: parseFloat(String(price)),
+      category: category.toLowerCase(),
       imageUrl,
       cafeId: adminData.cafeId,
     },
@@ -33,6 +32,19 @@ export const createMenuService = async (Param: MenuParams, user: AuthUser) => {
 export const getMenuService = async (cafeId: string) => {
   return prisma.menu.findMany({
     where: { cafeId },
+    orderBy: {
+      name: "asc",
+    },
+  });
+};
+
+export const getMenuWithCatService = async (
+  cafeId: string,
+  category: string,
+) => {
+  category = category.toLowerCase();
+  return prisma.menu.findMany({
+    where: { cafeId, category },
     orderBy: {
       name: "asc",
     },
@@ -60,7 +72,10 @@ export const updateMenuService = async (
 
   return prisma.menu.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      price: parseFloat(String(data.price)),
+    },
   });
 };
 

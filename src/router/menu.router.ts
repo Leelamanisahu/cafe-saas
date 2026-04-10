@@ -1,0 +1,33 @@
+import { Router } from "express";
+import { allowRoles, authMiddleware } from "../middleware/auth";
+import {
+  createMenu,
+  deleteMenu,
+  getMenu,
+  getMenuWithCategory,
+  updateMenu,
+} from "../controller/menu.controller";
+import { upload } from "../middleware/upload.middleware";
+
+const menuRouter = Router();
+
+// PUBLIC → get menu (QR)
+menuRouter.get("/:cafeId", getMenu);
+menuRouter.get("/:cafeId/:category", getMenuWithCategory);
+
+// ADMIN → create menu
+menuRouter.post(
+  "/",
+  authMiddleware,
+  allowRoles("ADMIN"),
+  upload.single("file"),
+  createMenu,
+);
+
+// ADMIN → update menu
+menuRouter.patch("/:id", authMiddleware, allowRoles("ADMIN"), updateMenu);
+
+// ADMIN → delete menu
+menuRouter.delete("/:id", authMiddleware, allowRoles("ADMIN"), deleteMenu);
+
+export default menuRouter;
