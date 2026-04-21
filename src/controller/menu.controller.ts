@@ -5,7 +5,7 @@ import {
   getMenuService,
   getMenuWithCatService,
   updateMenuService,
-} from "../service/menu.service";
+} from "../service/menu.service.js";
 
 export const createMenu = async (req: Request, res: Response) => {
   try {

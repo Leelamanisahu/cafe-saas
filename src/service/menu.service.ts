@@ -1,6 +1,6 @@
-import prisma from "../config/prisma";
-import { AuthUser } from "../types/auth";
-import { getAdminData } from "../utils/user";
+import prisma from "../config/prisma.js";
+import { AuthUser } from "../types/auth.js";
+import { getAdminData } from "../utils/user.js";
 
 interface MenuParams {
   name: string;
@@ -11,7 +11,7 @@ interface MenuParams {
 
 export const createMenuService = async (Param: MenuParams, user: AuthUser) => {
   const { name, price, category, imageUrl } = Param;
-
+  console.log("hit ");
   const adminData = await getAdminData(user);
   if (!adminData?.cafeId) {
     throw new Error("Admin must create a cafe first");

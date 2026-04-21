@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { allowRoles, authMiddleware } from "../middleware/auth";
+import { allowRoles, authMiddleware } from "../middleware/auth.js";
 import {
   createStaff,
   deleteStaff,
   getStaff,
-} from "../controller/staff.controller";
+} from "../controller/staff.controller.js";
 
 const staffRouter = Router();
 

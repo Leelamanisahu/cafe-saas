@@ -4,17 +4,17 @@ info:
   version: 1.0.0
 
 servers:
-  - url: http://localhost:3000/api
+  - url: /api
 
 paths:
   # =========================
-  # ADMIN APIs
+  # AUTH APIs
   # =========================
 
-  /admin/register:
+  /auth/register:
     post:
-      summary: Register Admin
-      tags: [Admin]
+      summary: Register user
+      tags: [Auth]
       requestBody:
         required: true
         content:
@@ -25,52 +25,101 @@ paths:
               properties:
                 email:
                   type: string
-                  example: admin@example.com
                 name:
                   type: string
-                  example: John Doe
                 password:
                   type: string
-                  example: password123
                 role:
                   type: string
-                  enum: [SUPER_ADMIN, ADMIN]
-                  example: ADMIN
+                  enum: [SUPER_ADMIN, ADMIN, STAFF]
       responses:
         201:
-          description: Admin created successfully
+          description: User created
 
-  /admin:
-    get:
-      summary: Get all admins
-      tags: [Admin]
+  /auth/login:
+    post:
+      summary: Login user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
       responses:
         200:
-          description: List of admins
+          description: Login success
+
+  /auth/user:
+    get:
+      summary: Get logged-in user
+      tags: [Auth]
+      responses:
+        200:
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # =========================
+  # CAFE APIs
+  # =========================
+
+  /cafe:
+    post:
+      summary: Create cafe
+      tags: [Cafe]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        201:
+          description: Cafe created
+
+  # =========================
+  # STAFF APIs
+  # =========================
+
+  /staff:
+    post:
+      summary: Add staff
+      tags: [Staff]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        201:
+          description: Staff added
+
+    get:
+      summary: Get staff list
+      tags: [Staff]
+      responses:
+        200:
+          description: List of staff
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/User"
-
-  /admin/{id}:
-    get:
-      summary: Get admin by ID
-      tags: [Admin]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Admin details
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
 
   # =========================
   # MENU APIs
@@ -83,26 +132,22 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
+              required: [name, price]
               type: object
-              required: [name, price, cafeId]
               properties:
                 name:
                   type: string
-                  example: Burger
                 price:
-                  type: number
-                  example: 150
+                  type: string
                 category:
                   type: string
-                  example: Fast Food
                 cafeId:
                   type: string
-                  example: cafe-uuid
                 imageUrl:
                   type: string
-                  example: https://image.com/burger.png
+                  format: binary
       responses:
         201:
           description: Menu created
@@ -112,7 +157,7 @@ paths:
       tags: [Menu]
       responses:
         200:
-          description: List of menu items
+          description: Menu list
           content:
             application/json:
               schema:
@@ -138,9 +183,87 @@ paths:
               schema:
                 $ref: "#/components/schemas/Menu"
 
-    patch:
-      summary: Update menu item
+  /menu/{id}/{category}:
+    get:
+      summary: Get menu by ID and category
       tags: [Menu]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Filtered menu
+
+  # =========================
+  # ORDER APIs
+  # =========================
+
+  /orders:
+    post:
+      summary: Create order
+      tags: [Orders]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required: [cafeId, tableNo, items]
+              type: object
+              properties:
+                cafeId:
+                  type: string
+                tableNo:
+                  type: integer
+                items:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/OrderItemInput"
+      responses:
+        201:
+          description: Order created
+
+    get:
+      summary: Get all orders
+      tags: [Orders]
+      responses:
+        200:
+          description: Orders list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+
+  /orders/{id}:
+    get:
+      summary: Get order by ID
+      tags: [Orders]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+    patch:
+      summary: Update order status
+      tags: [Orders]
       parameters:
         - name: id
           in: path
@@ -153,21 +276,17 @@ paths:
           application/json:
             schema:
               type: object
+              required: [status]
               properties:
-                name:
+                status:
                   type: string
-                price:
-                  type: number
-                category:
-                  type: string
-                imageUrl:
-                  type: string
+                  enum: [PENDING, PREPARING, COMPLETED]
       responses:
         200:
-          description: Menu updated successfully
+          description: Order updated
 
 # =========================
-# COMPONENTS (SCHEMAS)
+# COMPONENTS
 # =========================
 
 components:
@@ -183,10 +302,18 @@ components:
           type: string
         role:
           type: string
-          enum: [SUPER_ADMIN, ADMIN]
+          enum: [SUPER_ADMIN, ADMIN, STAFF]
         cafeId:
           type: string
           nullable: true
+
+    Cafe:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
 
     Menu:
       type: object
@@ -203,3 +330,29 @@ components:
           type: string
         cafeId:
           type: string
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        cafeId:
+          type: string
+        tableNo:
+          type: integer
+        status:
+          type: string
+          enum: [PENDING, PREPARING, COMPLETED]
+        total:
+          type: number
+        createdAt:
+          type: string
+
+    OrderItemInput:
+      type: object
+      required: [menuId, quantity]
+      properties:
+        menuId:
+          type: string
+        quantity:
+          type: integer

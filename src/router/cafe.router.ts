@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { allowRoles, authMiddleware } from "../middleware/auth";
-import { createCafe } from "../controller/cafe.controller";
+import { allowRoles, authMiddleware } from "../middleware/auth.js";
+import { createCafe } from "../controller/cafe.controller.js";
 
 const cafeRouter = Router();
 

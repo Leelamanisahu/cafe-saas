@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { allowRoles, authMiddleware } from "../middleware/auth";
+import { allowRoles, authMiddleware } from "../middleware/auth.js";
 import {
   createMenu,
   deleteMenu,
   getMenu,
   getMenuWithCategory,
   updateMenu,
-} from "../controller/menu.controller";
-import { upload } from "../middleware/upload.middleware";
+} from "../controller/menu.controller.js";
+import { upload } from "../middleware/upload.middleware.js";
 
 const menuRouter = Router();
 
