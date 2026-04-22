@@ -20,7 +20,7 @@ menuRouter.post(
   "/",
   authMiddleware,
   allowRoles("ADMIN"),
-  upload.single("file"),
+  upload.single("imageUrl"),
   createMenu,
 );
 

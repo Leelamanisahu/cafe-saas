@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createCafeService } from "../service/cafe.service";
+import { createCafeService } from "../service/cafe.service.js";
 
 export const createCafe = async (req: Request, res: Response) => {
   try {

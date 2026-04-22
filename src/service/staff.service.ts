@@ -1,8 +1,7 @@
-import { Param } from "@prisma/client/runtime/client";
-import prisma from "../config/prisma";
+import prisma from "../config/prisma.js";
 import bcrypt from "bcrypt";
-import { AuthUser } from "../types/auth";
-import { getAdminData } from "../utils/user";
+import { AuthUser } from "../types/auth.js";
+import { getAdminData } from "../utils/user.js";
 
 interface RegisterParams {
   email: string;

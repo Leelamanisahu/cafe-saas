@@ -1,5 +1,5 @@
-import prisma from "../config/prisma";
-import { AuthUser } from "../types/auth";
+import prisma from "../config/prisma.js";
+import { AuthUser } from "../types/auth.js";
 
 export const getAdminData = async (admin: AuthUser) => {
   const adminData = await prisma.user.findUnique({ where: { id: admin.id } });

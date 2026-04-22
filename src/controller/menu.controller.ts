@@ -26,7 +26,7 @@ export const createMenu = async (req: Request, res: Response) => {
 
 export const getMenu = async (req: Request, res: Response) => {
   try {
-    const menu = await getMenuService(req.params.id as string);
+    const menu = await getMenuService(req.params.cafeId as string);
     res.status(200).json(menu);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -36,7 +36,7 @@ export const getMenu = async (req: Request, res: Response) => {
 export const getMenuWithCategory = async (req: Request, res: Response) => {
   try {
     const menu = await getMenuWithCatService(
-      req.params.id as string,
+      req.params.cafeId as string,
       req.params.category as string,
     );
     res.status(200).json(menu);

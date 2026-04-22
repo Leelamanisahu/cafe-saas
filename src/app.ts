@@ -16,12 +16,21 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
 app.use(
   OpenApiValidator.middleware({
     apiSpec: path.join(__dirname, "../src/api/cafe-api.yaml"),
     validateRequests: true,
+    fileUploader: false,
+    ignorePaths: /^\/api\/menu/,
   }),
 );
+
+app.use("/api/auth", authRouter);
+app.use("/api/cafe", cafeRouter);
+app.use("/api/staff", staffRouter);
+app.use("/api/menu", menuRouter);
+app.use("/api/orders", orderRouter);
 
 app.use((err: any, req: any, res: any, next: any) => {
   // OpenAPI validation errors
@@ -42,11 +51,5 @@ app.use((err: any, req: any, res: any, next: any) => {
     message: err.message || "Internal Server Error",
   });
 });
-
-app.use("/api/auth", authRouter);
-app.use("/api/cafe", cafeRouter);
-app.use("/api/staff", staffRouter);
-app.use("/api/menu", menuRouter);
-app.use("/api/orders", orderRouter);
 
 export default app;

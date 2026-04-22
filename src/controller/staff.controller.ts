@@ -4,7 +4,7 @@ import {
   createStaffService,
   deleteStaffService,
   getStaffService,
-} from "../service/staff.service";
+} from "../service/staff.service.js";
 
 export const createStaff = async (req: Request, res: Response) => {
   try {
